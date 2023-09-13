@@ -4,13 +4,130 @@
 
 package com.crio.starter;
 
+import com.crio.starter.data.Ladder;
+import com.crio.starter.data.Player;
+import com.crio.starter.data.Snake;
+import com.crio.starter.data.SnakesAndLadders;
+import com.crio.starter.service.GameService;
+import com.crio.starter.service.GameServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Scanner;
+
 
 @SpringBootApplication
 public class App {
 
   public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    SnakesAndLadders snakesAndLadders = configureGame();
+    GameService gameService = new GameServiceImpl();
+    gameService.playGame(snakesAndLadders);
     SpringApplication.run(App.class, args);
   }
+
+  private static SnakesAndLadders configureGame() {
+    Scanner sc = new Scanner(System.in);
+    SnakesAndLadders snakesAndLadders = new SnakesAndLadders();
+    int numberOfSnakes = sc.nextInt();
+    for (int i = 1; i <= numberOfSnakes; i++) {
+      int head = sc.nextInt();
+      int tail = sc.nextInt();
+      Snake snake = new Snake(head, tail);
+      snakesAndLadders.getSnakes().add(snake);
+    }
+
+    int numberOfLadders = sc.nextInt();
+    for (int i = 1; i <= numberOfLadders; i++) {
+      int start = sc.nextInt();
+      int end = sc.nextInt();
+      Ladder ladder = new Ladder(start, end);
+      snakesAndLadders.getLadders().add(ladder);
+    }
+
+    int numberOfPlayers = sc.nextInt();
+    for (int i = 1; i <= numberOfPlayers; i++) {
+      String name = sc.next();
+      Player player = new Player(name, 0);
+      snakesAndLadders.getPlayers().add(player);
+    }
+
+    return snakesAndLadders;
+  }
+
+
+//  private static void playGame(SnakesAndLadders snakesAndLadders) {
+//    if (nonNull(snakesAndLadders)) {
+//      int numberOfPlayers = snakesAndLadders.getPlayers().size();
+//      int currentPlayer = 0;
+//      while (true) {
+//        if (currentPlayer == numberOfPlayers) {
+//          currentPlayer = currentPlayer % numberOfPlayers;
+//        }
+//        Player player = snakesAndLadders.getPlayers().get(currentPlayer);
+//        int diceNumber = rollDice();
+//        int originalPosition = player.getPosition();
+//        int newPosition = getPosition(player.getPosition(), diceNumber, snakesAndLadders);
+//        player.setPosition(newPosition);
+//        System.out.println(player.getName() + " rolled a " + diceNumber + " and moved from " + originalPosition + " to " + newPosition);
+//        if (player.getPosition() == 100) {
+//          System.out.println(player.getName() + " wins the game");
+//          System.exit(1);
+//        }
+//
+//        currentPlayer++;
+//      }
+//    }
+//  }
+
+//  private static int rollDice() {
+//    Random random = new Random();
+//    int diceNumber = random.nextInt(6 - 1 + 1) + 1;
+//    System.out.println("dice number is " + diceNumber);
+//    return diceNumber;
+//  }
+//
+//
+//  private static int getPosition(int currentPosition, int diceNumber, SnakesAndLadders snakesAndLadders) {
+//    if (nonNull(diceNumber) && nonNull(snakesAndLadders)) {
+//      if (currentPosition + diceNumber <= 100) {
+//        int newPosition = currentPosition + diceNumber;
+//        List<Snake> snakes = snakesAndLadders.getSnakes();
+//        List<Ladder> ladders = snakesAndLadders.getLadders();
+//
+//
+//        if (nonNull(snakes)) {
+//          while (true) {
+//            boolean hasSnake = false;
+//            for (Snake snake : snakes) {
+//              if (nonNull(snake) && snake.getHead() == newPosition) {
+//                hasSnake = true;
+//                newPosition = snake.getTail();
+//                break;
+//              }
+//            }
+//            if (!hasSnake) break;
+//          }
+//        }
+//
+//        if (nonNull(ladders)) {
+//          while (true) {
+//            boolean hasLadder = false;
+//            for (Ladder ladder : ladders) {
+//              if (nonNull(ladder) && ladder.getStart() == newPosition) {
+//                hasLadder = true;
+//                newPosition = ladder.getEnd();
+//                break;
+//              }
+//            }
+//            if (!hasLadder) break;
+//          }
+//        }
+//        return newPosition;
+//      }
+//      return currentPosition;
+//    }
+//    return -1;
+//  }
 }
